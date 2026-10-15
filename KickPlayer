@@ -1,3 +1,3 @@
-if game.Players.LocalPlayer.Name == "ronron1602" or "Cid_Shadow002" then
-    game.Players.LocalPlayer:Kick("U are not using my script u Stupid NiGG")
+if game.Players.LocalPlayer.Name == "PUT-USER-PLAYER" then
+    game.Players.LocalPlayer:Kick("Message For Player User Kick")
 end
