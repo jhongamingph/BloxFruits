@@ -1,3 +1,3 @@
-if game.Players.LocalPlayer.Name == "PUT-USER-PLAYER" then
+if game.Players.LocalPlayer.Name == "PUT-PLAYER-USER" then
     game.Players.LocalPlayer:Kick("Message For Player User Kick")
 end
