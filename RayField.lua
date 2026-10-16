@@ -9,7 +9,7 @@ local Window = Rayfield:CreateWindow({
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "Quantity Dynamics",
-        FileName = "ScriptFlag.json"
+        FileName = "ScriptFlag"
     },
     Discord = {
         Enabled = true,
