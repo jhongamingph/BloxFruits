@@ -3,12 +3,19 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 setclipboard("discord.gg/NyvndxAadV")
 
 local Window = Rayfield:CreateWindow({
-   Name = "Quantity Dynamics Hub",
-   LoadingTitle = "Please Wait...",
-   LoadingSubtitle = "By: jhongamingph",
-   ConfigurationSaving = {
-      Enabled = false,
-   },
+   Name = "Quantity Dynamics Hub 🚀",
+   LoadingTitle = "🚀 Quantity Dynamics 🚀",
+   LoadingSubtitle = "Join Discord for more script...",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "Quantity Dynamics",
+        FileName = "ScriptFlag.json"
+    },
+    Discord = {
+        Enabled = true,
+        Invite = "NyvndxAadV",
+        RememberJoins = true
+    },
    KeySystem = false,
 })
 
@@ -110,7 +117,7 @@ Tab:CreateToggle({
                   local enemies = workspace:FindFirstChild("Enemies")
                   
                   local target = nil
-                  local shortestDist = math.huge
+                  local shortestDist = 500 -- set distance 
                   
                   if enemies then
                       for _, enemy in ipairs(enemies:GetChildren()) do
@@ -127,7 +134,7 @@ Tab:CreateToggle({
                   end
                   
                   if target then
-                      rootPart.CFrame = target.CFrame + Vector3.new(0, 15, 0)
+                      rootPart.CFrame = target.CFrame + Vector3.new(0, 25, 0)
                   end
               end
           end
