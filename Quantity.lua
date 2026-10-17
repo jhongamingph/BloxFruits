@@ -161,7 +161,7 @@ if _G.FastAttack then
 end
 
 Tab:CreateToggle({
-   Name = "Auto Farm Nearest (Please Equip Mele)",
+   Name = "Auto Farm Nearest (Equip Mele or Sword)",
    CurrentValue = false,
    Flag = "AutoFarmNearest",
    Callback = function(Value)
@@ -204,7 +204,7 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-   Name = "Teleport Nearest Player (Please Equip Mele)",
+   Name = "Teleport Nearest Player (Equip Mele or Sword)",
    CurrentValue = false,
    Flag = "TeleportNearestPlayer",
    Callback = function(Value)
