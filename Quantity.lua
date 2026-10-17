@@ -26,6 +26,7 @@ local TeleportPlayerEnabled = false
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+
 _G.FastAttack = true
 
 if _G.FastAttack then
