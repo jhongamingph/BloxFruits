@@ -13,7 +13,7 @@ local Window = Rayfield:CreateWindow({
     },
     Discord = {
         Enabled = true,
-        Invite = "NyvndxAadV",
+        Invite = "discord.gg/NyvndxAadV",
         RememberJoins = true
     },
    KeySystem = false,
@@ -22,6 +22,7 @@ local Window = Rayfield:CreateWindow({
 local Tab = Window:CreateTab("Main Farm", 4483362458)
 
 local AutoFarmEnabled = false
+local TeleportPlayerEnabled = false
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
@@ -34,40 +35,95 @@ if _G.FastAttack then
         local success, result = pcall(function()
             return parent:WaitForChild(childName)
         end)
+        if not success or not result then
+            warn("noooooo: " .. childName)
+        end
         return result
     end
 
+    local function WaitChilds(path, ...)
+        local last = path
+        for _, child in {...} do
+            last = last:FindFirstChild(child) or SafeWaitForChild(last, child)
+            if not last then break end
+        end
+        return last
+    end
+
+    local VirtualInputManager = game:GetService("VirtualInputManager")
+    local CollectionService = game:GetService("CollectionService")
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    local Net = SafeWaitForChild(ReplicatedStorage, "Modules") and SafeWaitForChild(ReplicatedStorage.Modules, "Net")
-    
+    local TeleportService = game:GetService("TeleportService")
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local Player = Players.LocalPlayer
+
+    if not Player then
+        warn("Không tìm thy ngi chi cc b.")
+        return
+    end
+
+    local Remotes = SafeWaitForChild(ReplicatedStorage, "Remotes")
+    if not Remotes then return end
+
+    local Validator = SafeWaitForChild(Remotes, "Validator")
+    local CommF = SafeWaitForChild(Remotes, "CommF_")
+    local CommE = SafeWaitForChild(Remotes, "CommE")
+
+    local ChestModels = SafeWaitForChild(workspace, "ChestModels")
+    local WorldOrigin = SafeWaitForChild(workspace, "_WorldOrigin")
+    local Characters = SafeWaitForChild(workspace, "Characters")
+    local Enemies = SafeWaitForChild(workspace, "Enemies")
+    local Map = SafeWaitForChild(workspace, "Map")
+
+    local EnemySpawns = SafeWaitForChild(WorldOrigin, "EnemySpawns")
+    local Locations = SafeWaitForChild(WorldOrigin, "Locations")
+
+    local RenderStepped = RunService.RenderStepped
+    local Heartbeat = RunService.Heartbeat
+    local Stepped = RunService.Stepped
+
+    local Modules = SafeWaitForChild(ReplicatedStorage, "Modules")
+    local Net = SafeWaitForChild(Modules, "Net")
+
+    local sethiddenproperty = sethiddenproperty or function(...) return ... end
+    local setupvalue = setupvalue or (debug and debug.setupvalue)
+    local getupvalue = getupvalue or (debug and debug.getupvalue)
+
     local Settings = {
         AutoClick = true,
         ClickDelay = 0,
     }
 
-    if Net and not _ENV.rz_FastAttack then
+    local Module = {}
+
+    Module.FastAttack = (function()
+        if _ENV.rz_FastAttack then
+            return _ENV.rz_FastAttack
+        end
+
         local FastAttack = {
-            Distance = 120,
+            Distance = 150,
             attackMobs = true,
             attackPlayers = true,
+            Equipped = nil
         }
 
         local RegisterAttack = SafeWaitForChild(Net, "RE/RegisterAttack")
         local RegisterHit = SafeWaitForChild(Net, "RE/RegisterHit")
 
         local function IsAlive(character)
-            return character and character:FindFirstChild("Humanoid") and character.Humanoid.Health > 0
+        return character and character:FindFirstChild("Humanoid") and character.Humanoid.Health > 0
         end
 
         local function ProcessEnemies(OthersEnemies, Folder)
             local BasePart = nil
-            if not Folder then return BasePart end
-            for _, Enemy in ipairs(Folder:GetChildren()) do
-                local tryHead = Enemy:FindFirstChild("Head")
-                if tryHead and IsAlive(Enemy) and LocalPlayer:DistanceFromCharacter(tryHead.Position) < FastAttack.Distance then
-                    if Enemy ~= LocalPlayer.Character then
-                        table.insert(OthersEnemies, { Enemy, tryHead })
-                        BasePart = tryHead
+            for _, Enemy in Folder:GetChildren() do
+                local Head = Enemy:FindFirstChild("Head")
+                if Head and IsAlive(Enemy) and Player:DistanceFromCharacter(Head.Position) < FastAttack.Distance then
+                    if Enemy ~= Player.Character then
+                        table.insert(OthersEnemies, { Enemy, Head })
+                        BasePart = Head
                     end
                 end
             end
@@ -75,34 +131,46 @@ if _G.FastAttack then
         end
 
         function FastAttack:Attack(BasePart, OthersEnemies)
-            if not BasePart or #OthersEnemies == 0 or not RegisterAttack or not RegisterHit then return end
+            if not BasePart or #OthersEnemies == 0 then return end
             RegisterAttack:FireServer(Settings.ClickDelay or 0)
             RegisterHit:FireServer(BasePart, OthersEnemies)
         end
 
         function FastAttack:AttackNearest()
             local OthersEnemies = {}
-            local Part1 = ProcessEnemies(OthersEnemies, workspace:FindFirstChild("Enemies"))
-            local Part2 = ProcessEnemies(OthersEnemies, workspace:FindFirstChild("Characters"))
+            local Part1 = ProcessEnemies(OthersEnemies, Enemies)
+            local Part2 = ProcessEnemies(OthersEnemies, Characters)
             if #OthersEnemies > 0 then
                 self:Attack(Part1 or Part2, OthersEnemies)
+            else
+                task.wait(0)
+            end
+        end
+
+        function FastAttack:BladeHits()
+            local Equipped = IsAlive(Player.Character) and Player.Character:FindFirstChildOfClass("Tool")
+            if Equipped and Equipped.ToolTip ~= "Gun" then
+                self:AttackNearest()
+            else
+                task.wait(0)
             end
         end
 
         task.spawn(function()
             while task.wait(Settings.ClickDelay) do
-                if Settings.AutoClick and AutoFarmEnabled then
-                    FastAttack:AttackNearest()
+                if Settings.AutoClick then
+                    FastAttack:BladeHits()
                 end
             end
         end)
 
         _ENV.rz_FastAttack = FastAttack
-    end
+        return FastAttack
+    end)()
 end
 
 Tab:CreateToggle({
-   Name = "Auto Farm Nearest",
+   Name = "Auto Farm Nearest (Please Equip Mele)",
    CurrentValue = false,
    Flag = "AutoFarmNearest",
    Callback = function(Value)
@@ -117,7 +185,7 @@ Tab:CreateToggle({
                   local enemies = workspace:FindFirstChild("Enemies")
                   
                   local target = nil
-                  local shortestDist = 500 -- set distance 
+                  local shortestDist = 500 
                   
                   if enemies then
                       for _, enemy in ipairs(enemies:GetChildren()) do
@@ -134,7 +202,53 @@ Tab:CreateToggle({
                   end
                   
                   if target then
-                      rootPart.CFrame = target.CFrame + Vector3.new(0, 25, 0)
+                      rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                      rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                      rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                  end
+              end
+          end
+      end)
+   end,
+})
+
+Tab:CreateToggle({
+   Name = "Teleport Nearest Player (Please Equip Mele)",
+   CurrentValue = false,
+   Flag = "TeleportNearestPlayer",
+   Callback = function(Value)
+      TeleportPlayerEnabled = Value
+      
+      task.spawn(function()
+          while TeleportPlayerEnabled do
+              RunService.Heartbeat:Wait()
+              local char = LocalPlayer.Character
+              if char and char:FindFirstChild("HumanoidRootPart") then
+                  local rootPart = char.HumanoidRootPart
+                  local target = nil
+                  local shortestDist = 500
+                  
+                  for _, player in ipairs(Players:GetPlayers()) do
+                      if player ~= LocalPlayer then
+                          local pChar = player.Character
+                          if pChar then
+                              local pRoot = pChar:FindFirstChild("HumanoidRootPart")
+                              local pHum = pChar:FindFirstChildOfClass("Humanoid")
+                              if pRoot and pHum and pHum.Health > 0 then
+                                  local dist = (rootPart.Position - pRoot.Position).Magnitude
+                                  if dist < shortestDist then
+                                      shortestDist = dist
+                                      target = pRoot
+                                  end
+                              end
+                          end
+                      end
+                  end
+                  
+                  if target then
+                      rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                      rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                      rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
                   end
               end
           end
