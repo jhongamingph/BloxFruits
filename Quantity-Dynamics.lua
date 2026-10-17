@@ -1,4 +1,4 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Rayfield = loastring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 setclipboard("discord.gg/NyvndxAadV")
 
