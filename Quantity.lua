@@ -204,7 +204,7 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-   Name = "Teleport Nearest Player (Equip Mele or Sword)",
+   Name = "Teleport Nearest Player (Instant)",
    CurrentValue = false,
    Flag = "TeleportNearestPlayer",
    Callback = function(Value)
@@ -248,7 +248,7 @@ Tab:CreateToggle({
 })
 
 Tab:CreateButton({
-   Name = "Fast Mode",
+   Name = "Fast Mode (Recommended For Mobile)",
    Callback = function()
       local Lighting = game:GetService("Lighting")
       local Terrain = workspace:FindFirstChildOfClass("Terrain")
