@@ -9,7 +9,7 @@ local Window = Rayfield:CreateWindow({
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "Quantity Dynamics",
-        FileName = "ScriptFlag"
+        FileName = "Configuration"
     },
     Discord = {
         Enabled = true,
@@ -65,7 +65,7 @@ if _G.FastAttack then
     }
 
     local FastAttack = _ENV.rz_FastAttack or {
-        Distance = 55,
+        Distance = 55,  -- set distance
         attackMobs = true,
         attackPlayers = true
     }
@@ -176,7 +176,7 @@ Tab:CreateToggle({
                     local enemies = workspace:FindFirstChild("Enemies")
                     
                     local target = nil
-                    local shortestDist = 500 
+                    local shortestDist = 400 -- set distance
                     
                     if enemies then
                         for _, enemy in ipairs(enemies:GetChildren()) do
@@ -193,7 +193,7 @@ Tab:CreateToggle({
                     end
                     
                     if target then
-                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 20, 0))
+                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0)) -- Y 25 is position
                         rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                         rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
                     end
@@ -217,7 +217,7 @@ Tab:CreateToggle({
                 if char and char:FindFirstChild("HumanoidRootPart") then
                     local rootPart = char.HumanoidRootPart
                     local target = nil
-                    local shortestDist = 400
+                    local shortestDist = 400 -- set distance
                     
                     for _, player in ipairs(Players:GetPlayers()) do
                         if player ~= LocalPlayer then
@@ -237,7 +237,7 @@ Tab:CreateToggle({
                     end
                     
                     if target then
-                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 20, 0))
+                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0)) -- Y 25 is position
                         rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                         rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
                     end
