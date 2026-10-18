@@ -3,9 +3,9 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 setclipboard("discord.gg/NyvndxAadV")
 
 local Window = Rayfield:CreateWindow({
-   Name = "Quantity Dynamics Hub 🚀",
-   LoadingTitle = "🚀 Quantity Dynamics 🚀",
-   LoadingSubtitle = "Join Discord for more script...",
+    Name = "Quantity Dynamics Hub 🚀",
+    LoadingTitle = "🚀 Quantity Dynamics 🚀",
+    LoadingSubtitle = "Join Discord for more script...",
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "Quantity Dynamics",
@@ -16,7 +16,7 @@ local Window = Rayfield:CreateWindow({
         Invite = "discord.gg/NyvndxAadV",
         RememberJoins = true
     },
-   KeySystem = false,
+    KeySystem = false,
 })
 
 local Tab = Window:CreateTab("Main Farm", 4483362458)
@@ -161,145 +161,145 @@ if _G.FastAttack then
 end
 
 Tab:CreateToggle({
-   Name = "Auto Farm Nearest (Equip Mele or Sword)",
-   CurrentValue = false,
-   Flag = "AutoFarmNearest",
-   Callback = function(Value)
-      AutoFarmEnabled = Value
-      
-      task.spawn(function()
-          while AutoFarmEnabled do
-              RunService.Heartbeat:Wait()
-              local char = LocalPlayer.Character
-              if char and char:FindFirstChild("HumanoidRootPart") then
-                  local rootPart = char.HumanoidRootPart
-                  local enemies = workspace:FindFirstChild("Enemies")
-                  
-                  local target = nil
-                  local shortestDist = 500 
-                  
-                  if enemies then
-                      for _, enemy in ipairs(enemies:GetChildren()) do
-                          local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
-                          local hum = enemy:FindFirstChildOfClass("Humanoid")
-                          if enemyRoot and hum and hum.Health > 0 then
-                              local dist = (rootPart.Position - enemyRoot.Position).Magnitude
-                              if dist < shortestDist then
-                                  shortestDist = dist
-                                  target = enemyRoot
-                              end
-                          end
-                      end
-                  end
-                  
-                  if target then
-                      rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
-                      rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                      rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                  end
-              end
-          end
-      end)
-   end,
+    Name = "Auto Farm Nearest (Target One Mobs)",
+    CurrentValue = false,
+    Flag = "AutoFarmNearest",
+    Callback = function(Value)
+        AutoFarmEnabled = Value
+        
+        task.spawn(function()
+            while AutoFarmEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local enemies = workspace:FindFirstChild("Enemies")
+                    
+                    local target = nil
+                    local shortestDist = 500 
+                    
+                    if enemies then
+                        for _, enemy in ipairs(enemies:GetChildren()) do
+                            local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
+                            local hum = enemy:FindFirstChildOfClass("Humanoid")
+                            if enemyRoot and hum and hum.Health > 0 then
+                                local dist = (rootPart.Position - enemyRoot.Position).Magnitude
+                                if dist < shortestDist then
+                                    shortestDist = dist
+                                    target = enemyRoot
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 20, 0))
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    end
+                end
+            end
+        end)
+    end,
 })
 
 Tab:CreateToggle({
-   Name = "Teleport Nearest Player (Instant)",
-   CurrentValue = false,
-   Flag = "TeleportNearestPlayer",
-   Callback = function(Value)
-      TeleportPlayerEnabled = Value
-      
-      task.spawn(function()
-          while TeleportPlayerEnabled do
-              RunService.Heartbeat:Wait()
-              local char = LocalPlayer.Character
-              if char and char:FindFirstChild("HumanoidRootPart") then
-                  local rootPart = char.HumanoidRootPart
-                  local target = nil
-                  local shortestDist = 500
-                  
-                  for _, player in ipairs(Players:GetPlayers()) do
-                      if player ~= LocalPlayer then
-                          local pChar = player.Character
-                          if pChar then
-                              local pRoot = pChar:FindFirstChild("HumanoidRootPart")
-                              local pHum = pChar:FindFirstChildOfClass("Humanoid")
-                              if pRoot and pHum and pHum.Health > 0 then
-                                  local dist = (rootPart.Position - pRoot.Position).Magnitude
-                                  if dist < shortestDist then
-                                      shortestDist = dist
-                                      target = pRoot
-                                  end
-                              end
-                          end
-                      end
-                  end
-                  
-                  if target then
-                      rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
-                      rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                      rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                  end
-              end
-          end
-      end)
-   end,
+    Name = "Teleport Nearest Player (Instant)",
+    CurrentValue = false,
+    Flag = "TeleportNearestPlayer",
+    Callback = function(Value)
+        TeleportPlayerEnabled = Value
+        
+        task.spawn(function()
+            while TeleportPlayerEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local target = nil
+                    local shortestDist = 400
+                    
+                    for _, player in ipairs(Players:GetPlayers()) do
+                        if player ~= LocalPlayer then
+                            local pChar = player.Character
+                            if pChar then
+                                local pRoot = pChar:FindFirstChild("HumanoidRootPart")
+                                local pHum = pChar:FindFirstChildOfClass("Humanoid")
+                                if pRoot and pHum and pHum.Health > 0 then
+                                    local dist = (rootPart.Position - pRoot.Position).Magnitude
+                                    if dist < shortestDist then
+                                        shortestDist = dist
+                                        target = pRoot
+                                    end
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 20, 0))
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    end
+                end
+            end
+        end)
+    end,
 })
 
 Tab:CreateButton({
-   Name = "Fast Mode (Recommended For Mobile)",
-   Callback = function()
-      local Lighting = game:GetService("Lighting")
-      local Terrain = workspace:FindFirstChildOfClass("Terrain")
+    Name = "Fast Mode (Recommended For Mobile)",
+    Callback = function()
+        local Lighting = game:GetService("Lighting")
+        local Terrain = workspace:FindFirstChildOfClass("Terrain")
 
-      Lighting.FogStart = math.huge
-      Lighting.FogEnd = math.huge
-      Lighting.GlobalShadows = false
+        Lighting.FogStart = math.huge
+        Lighting.FogEnd = math.huge
+        Lighting.GlobalShadows = false
 
-      if setfpscap then
-          setfpscap(math.huge)
-      end
+        if setfpscap then
+            setfpscap(math.huge)
+        end
 
-      if Terrain then
-          Terrain.WaterWaveSize = 0
-          Terrain.WaterWaveSpeed = 0
-          Terrain.WaterReflectance = 0
-          Terrain.WaterTransparency = 0
-      end
+        if Terrain then
+            Terrain.WaterWaveSize = 0
+            Terrain.WaterWaveSpeed = 0
+            Terrain.WaterReflectance = 0
+            Terrain.WaterTransparency = 0
+        end
 
-      local function optimizeInstance(instance)
-          if instance:IsA("Texture") or instance:IsA("Decal") then
-              instance:Destroy()
-          elseif instance:IsA("ParticleEmitter") or instance:IsA("Trail") or instance:IsA("Smoke") or instance:IsA("Fire") or instance:IsA("Sparkles") then
-              instance:Destroy()
-          elseif instance:IsA("BasePart") and not instance:IsDescendantOf(LocalPlayer.Character or workspace) then
-              instance.Material = Enum.Material.SmoothPlastic
-              instance.Reflectance = 0
-          elseif instance:IsA("SurfaceAppearance") or instance:IsA("MeshPart") then
-              if instance:IsA("MeshPart") then
-                  instance.Material = Enum.Material.SmoothPlastic
-              end
-          end
-      end
+        local function optimizeInstance(instance)
+            if instance:IsA("Texture") or instance:IsA("Decal") then
+                instance:Destroy()
+            elseif instance:IsA("ParticleEmitter") or instance:IsA("Trail") or instance:IsA("Smoke") or instance:IsA("Fire") or instance:IsA("Sparkles") then
+                instance:Destroy()
+            elseif instance:IsA("BasePart") and not instance:IsDescendantOf(LocalPlayer.Character or workspace) then
+                instance.Material = Enum.Material.SmoothPlastic
+                instance.Reflectance = 0
+            elseif instance:IsA("SurfaceAppearance") or instance:IsA("MeshPart") then
+                if instance:IsA("MeshPart") then
+                    instance.Material = Enum.Material.SmoothPlastic
+                end
+            end
+        end
 
-      for _, obj in ipairs(workspace:GetDescendants()) do
-          optimizeInstance(obj)
-      end
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            optimizeInstance(obj)
+        end
 
-      for _, obj in ipairs(Lighting:GetDescendants()) do
-          if obj:IsA("Atmosphere") or obj:IsA("Sky") or obj:IsA("BloomEffect") or obj:IsA("BlurEffect") or obj:IsA("DepthOfFieldEffect") or obj:IsA("SunRaysEffect") then
-              obj:Destroy()
-          end
-      end
+        for _, obj in ipairs(Lighting:GetDescendants()) do
+            if obj:IsA("Atmosphere") or obj:IsA("Sky") or obj:IsA("BloomEffect") or obj:IsA("BlurEffect") or obj:IsA("DepthOfFieldEffect") or obj:IsA("SunRaysEffect") then
+                obj:Destroy()
+            end
+        end
 
-      workspace.DescendantAdded:Connect(function(newObj)
-          task.wait()
-          if newObj and newObj.Parent then
-              optimizeInstance(newObj)
-          end
-      end)
-   end,
+        workspace.DescendantAdded:Connect(function(newObj)
+            task.wait()
+            if newObj and newObj.Parent then
+                optimizeInstance(newObj)
+            end
+        end)
+    end,
 })
 
 Rayfield:LoadConfiguration()
