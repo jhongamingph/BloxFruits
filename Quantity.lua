@@ -66,7 +66,7 @@ if _G.FastAttack then
     }
 
     local FastAttack = _ENV.rz_FastAttack or {
-        Distance = 55,  -- set distance
+        Distance = 55,
         attackMobs = true,
         attackPlayers = true
     }
@@ -228,7 +228,7 @@ Tab:CreateToggle({
                     local hp = math.floor(humanoid.Health)
                     local maxHp = math.floor(humanoid.MaxHealth)
                     
-                    textLabel.Text = string.format("Level %s • %s • %d/%d HP", level, player.DisplayName, hp, maxHp)
+                    textLabel.Text = string.format("Level %s | %s | %d/%d HP", level, player.DisplayName, hp, maxHp)
                 end)
             end
             
