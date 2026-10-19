@@ -21,6 +21,7 @@ local Window = Rayfield:CreateWindow({
 
 local Tab = Window:CreateTab("Main Farm", 4483362458)
 
+local ESPEnabled = false
 local AutoFarmEnabled = false
 local TeleportPlayerEnabled = false
 local Players = game:GetService("Players")
@@ -161,6 +162,91 @@ if _G.FastAttack then
 end
 
 Tab:CreateToggle({
+    Name = "Esp Player (Show Player Name)",
+    CurrentValue = false,
+    Flag = "EspPlayerToggle",
+    Callback = function(Value)
+        ESPEnabled = Value
+        
+        local function applyESP(player)
+            if player == LocalPlayer then return end
+            
+            local function createBillboard(char)
+                if char:FindFirstChild("QuantityDynamicsESP") then return end
+                
+                local head = char:WaitForChild("Head", 5)
+                local humanoid = char:WaitForChild("Humanoid", 5)
+                if not head or not humanoid then return end
+                
+                local bg = Instance.new("BillboardGui")
+                bg.Name = "QuantityDynamicsESP"
+                bg.Adornee = head
+                bg.Size = UDim2.new(0, 200, 0, 50)
+                bg.StudsOffset = Vector3.new(0, 2.5, 0)
+                bg.AlwaysOnTop = true
+                
+                local textLabel = Instance.new("TextLabel")
+                textLabel.Name = "ESPText"
+                textLabel.Size = UDim2.new(1, 0, 1, 0)
+                textLabel.BackgroundTransparency = 1
+                textLabel.TextScaled = false
+                textLabel.TextSize = 14
+                textLabel.Font = Enum.Font.SourceSansBold
+                textLabel.TextStrokeTransparency = 0
+                textLabel.Parent = bg
+                
+                bg.Parent = char
+                
+                local connection
+                connection = RunService.Heartbeat:Connect(function()
+                    if not ESPEnabled or not char or not char.Parent or humanoid.Health <= 0 then
+                        bg:Destroy()
+                        if connection then connection:Disconnect() end
+                        return
+                    end
+                    
+                    local teamColor = Color3.fromRGB(255, 255, 255)
+                    local teamVal = player:FindFirstChild("Team") or (player.Team and player.Team.Name)
+                    local teamStr = tostring(player.Team or "")
+                    
+                    if teamStr == "Pirates" or teamStr == "Pirate" then
+                        teamColor = Color3.fromRGB(255, 50, 50)
+                    elseif teamStr == "Marines" or teamStr == "Marine" then
+                        teamColor = Color3.fromRGB(50, 100, 255)
+                    end
+                    
+                    textLabel.TextColor3 = teamColor
+                    
+                    local level = "N/A"
+                    local dataFolder = player:FindFirstChild("Data")
+                    if dataFolder and dataFolder:FindFirstChild("Level") then
+                        level = tostring(dataFolder.Level.Value)
+                    elseif player:FindFirstChild("Level") then
+                        level = tostring(player.Level.Value)
+                    end
+                    
+                    local hp = math.floor(humanoid.Health)
+                    local maxHp = math.floor(humanoid.MaxHealth)
+                    
+                    textLabel.Text = string.format("Level %s • %s • %d/%d HP", level, player.DisplayName, hp, maxHp)
+                end)
+            end
+            
+            if player.Character then
+                createBillboard(player.Character)
+            end
+            player.CharacterAdded:Connect(createBillboard)
+        end
+        
+        for _, p in ipairs(Players:GetPlayers()) do
+            applyESP(p)
+        end
+        
+        Players.PlayerAdded:Connect(applyESP)
+    end,
+})
+
+Tab:CreateToggle({
     Name = "Auto Farm Nearest (Target One Mobs)",
     CurrentValue = false,
     Flag = "AutoFarmNearest",
@@ -176,7 +262,7 @@ Tab:CreateToggle({
                     local enemies = workspace:FindFirstChild("Enemies")
                     
                     local target = nil
-                    local shortestDist = 400 -- set distance
+                    local shortestDist = 400
                     
                     if enemies then
                         for _, enemy in ipairs(enemies:GetChildren()) do
@@ -193,7 +279,7 @@ Tab:CreateToggle({
                     end
                     
                     if target then
-                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0)) -- Y 25 is position
+                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
                         rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                         rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
                     end
@@ -217,7 +303,7 @@ Tab:CreateToggle({
                 if char and char:FindFirstChild("HumanoidRootPart") then
                     local rootPart = char.HumanoidRootPart
                     local target = nil
-                    local shortestDist = 400 -- set distance
+                    local shortestDist = 400
                     
                     for _, player in ipairs(Players:GetPlayers()) do
                         if player ~= LocalPlayer then
@@ -237,7 +323,7 @@ Tab:CreateToggle({
                     end
                     
                     if target then
-                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0)) -- Y 25 is position
+                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
                         rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                         rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
                     end
