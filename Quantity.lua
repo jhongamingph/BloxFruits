@@ -442,7 +442,7 @@ TeleportTab:CreateToggle({
 })
 
 TeleportTab:CreateToggle({
-    Name = "Teleport Nearest Player (Instant TP)",
+    Name = "Teleport Nearest Player (Instant)",
     CurrentValue = false,
     Flag = "TeleportPlayerInstant",
     Callback = function(Value)
