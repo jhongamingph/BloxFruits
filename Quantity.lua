@@ -248,7 +248,7 @@ MainTab:CreateToggle({
                     local enemies = workspace:FindFirstChild("Enemies")
                     
                     local target = nil
-                    local shortestDist = 400
+                    local shortestDist = 500
                     
                     if enemies then
                         for _, enemy in ipairs(enemies:GetChildren()) do
