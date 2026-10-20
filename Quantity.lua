@@ -19,14 +19,68 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false,
 })
 
-local Tab = Window:CreateTab("Main Farm", 4483362458)
+local MainTab = Window:CreateTab("Main", 4483362458)
+local TeleportTab = Window:CreateTab("Teleport", 4483345998)
+local EspTab = Window:CreateTab("Esp", 6031094678)
 
+local AutoFarmNearestSpeedEnabled =false
+local AutoFarmNearestInstantEnabled =false
+local TeleportPlayerSpeedEnabled = false
+local TeleportPlayerInstantEnabled = false
 local ESPEnabled = false
-local AutoFarmEnabled = false
-local TeleportPlayerEnabled = false
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+
+local Lighting = game:GetService("Lighting")
+local Terrain = workspace:FindFirstChildOfClass("Terrain")
+
+Lighting.FogStart = math.huge
+Lighting.FogEnd = math.huge
+Lighting.GlobalShadows = false
+
+if setfpscap then
+    setfpscap(math.huge)
+end
+
+if Terrain then
+    Terrain.WaterWaveSize = 0
+    Terrain.WaterWaveSpeed = 0
+    Terrain.WaterReflectance = 0
+    Terrain.WaterTransparency = 0
+end
+
+local function optimizeInstance(instance)
+    if instance:IsA("Texture") or instance:IsA("Decal") then
+        instance:Destroy()
+    elseif instance:IsA("ParticleEmitter") or instance:IsA("Trail") or instance:IsA("Smoke") or instance:IsA("Fire") or instance:IsA("Sparkles") then
+        instance:Destroy()
+    elseif instance:IsA("BasePart") and not instance:IsDescendantOf(game.Players.LocalPlayer.Character or workspace) then
+        instance.Material = Enum.Material.SmoothPlastic
+        instance.Reflectance = 0
+    elseif instance:IsA("SurfaceAppearance") or instance:IsA("MeshPart") then
+        if instance:IsA("MeshPart") then
+            instance.Material = Enum.Material.SmoothPlastic
+        end
+    end
+end
+
+for _, obj in ipairs(workspace:GetDescendants()) do
+    optimizeInstance(obj)
+end
+
+for _, obj in ipairs(Lighting:GetDescendants()) do
+    if obj:IsA("Atmosphere") or obj:IsA("Sky") or obj:IsA("BloomEffect") or obj:IsA("BlurEffect") or obj:IsA("DepthOfFieldEffect") or obj:IsA("SunRaysEffect") then
+        obj:Destroy()
+    end
+end
+
+workspace.DescendantAdded:Connect(function(newObj)
+    task.wait()
+    if newObj and newObj.Parent then
+        optimizeInstance(newObj)
+    end
+end)
 
 _G.FastAttack = true
 
@@ -161,7 +215,277 @@ if _G.FastAttack then
     _ENV.rz_FastAttack = FastAttack
 end
 
-Tab:CreateToggle({
+MainTab:CreateToggle({
+    Name = "Auto Farm Nearest (Speed)",
+    CurrentValue = false,
+    Flag = "AutoFarmNearestSpeed",
+    Callback = function(Value)
+        AutoFarmNearestSpeedEnabled = Value
+        
+        task.spawn(function()
+            local TweenService = game:GetService("TweenService")
+            local currentTween = nil
+            local noclipConnection = nil
+            
+            if AutoFarmNearestSpeedEnabled then
+                noclipConnection = RunService.Stepped:Connect(function()
+                    local char = LocalPlayer.Character
+                    if char then
+                        for _, part in ipairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") and part.CanCollide then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            end
+            
+            while AutoFarmNearestSpeedEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local enemies = workspace:FindFirstChild("Enemies")
+                    
+                    local target = nil
+                    local shortestDist = 400
+                    
+                    if enemies then
+                        for _, enemy in ipairs(enemies:GetChildren()) do
+                            local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
+                            local hum = enemy:FindFirstChildOfClass("Humanoid")
+                            if enemyRoot and hum and hum.Health > 0 then
+                                local dist = (rootPart.Position - enemyRoot.Position).Magnitude
+                                if dist < shortestDist then
+                                    shortestDist = dist
+                                    target = enemyRoot
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                        local distance = (rootPart.Position - targetCFrame.Position).Magnitude
+                        local speed = 170
+                        local timeToReach = distance / speed
+                        
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                        
+                        local tweenInfo = TweenInfo.new(
+                            timeToReach,
+                            Enum.EasingStyle.Linear,
+                            Enum.EasingDirection.Out
+                        )
+                        
+                        currentTween = TweenService:Create(rootPart, tweenInfo, {CFrame = targetCFrame})
+                        currentTween:Play()
+                        
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    else
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                    end
+                else
+                    if currentTween then
+                        currentTween:Cancel()
+                    end
+                end
+            end
+            
+            if currentTween then
+                currentTween:Cancel()
+            end
+            
+            if noclipConnection then
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end
+            
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        if part.Name == "HumanoidRootPart" then
+                            part.CanCollide = false
+                        else
+                            part.CanCollide = true
+                        end
+                    end
+                end
+            end
+        end)
+    end,
+})
+
+MainTab:CreateToggle({
+    Name = "Auto Farm Nearest (Instant)",
+    CurrentValue = false,
+    Flag = "AutoFarmNearestInstant",
+    Callback = function(Value)
+        AutoFarmNearestInstantEnabled = Value
+        
+        task.spawn(function()
+            while AutoFarmNearestInstantEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local enemies = workspace:FindFirstChild("Enemies")
+                    
+                    local target = nil
+                    local shortestDist = 400
+                    
+                    if enemies then
+                        for _, enemy in ipairs(enemies:GetChildren()) do
+                            local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
+                            local hum = enemy:FindFirstChildOfClass("Humanoid")
+                            if enemyRoot and hum and hum.Health > 0 then
+                                local dist = (rootPart.Position - enemyRoot.Position).Magnitude
+                                if dist < shortestDist then
+                                    shortestDist = dist
+                                    target = enemyRoot
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    end
+                end
+            end
+        end)
+    end,
+})
+
+TeleportTab:CreateToggle({
+    Name = "Teleport Nearest Player (Speed)",
+    CurrentValue = false,
+    Flag = "TeleportNearestPlayerSpeed",
+    Callback = function(Value)
+        TeleportPlayerSpeedEnabled = Value
+        
+        task.spawn(function()
+            local TweenService = game:GetService("TweenService")
+            local currentTween = nil
+            
+            while TeleportPlayerSpeedEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local target = nil
+                    local shortestDist = 500
+                    
+                    for _, player in ipairs(Players:GetPlayers()) do
+                        if player ~= LocalPlayer then
+                            local pChar = player.Character
+                            if pChar then
+                                local pRoot = pChar:FindFirstChild("HumanoidRootPart")
+                                local pHum = pChar:FindFirstChildOfClass("Humanoid")
+                                if pRoot and pHum and pHum.Health > 0 then
+                                    local dist = (rootPart.Position - pRoot.Position).Magnitude
+                                    if dist < shortestDist then
+                                        shortestDist = dist
+                                        target = pRoot
+                                    end
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                        local distance = (rootPart.Position - targetCFrame.Position).Magnitude
+                        local speed = 170
+                        local timeToReach = distance / speed
+                        
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                        
+                        local tweenInfo = TweenInfo.new(
+                            timeToReach,
+                            Enum.EasingStyle.Linear,
+                            Enum.EasingDirection.Out
+                        )
+                        
+                        currentTween = TweenService:Create(rootPart, tweenInfo, {CFrame = targetCFrame})
+                        currentTween:Play()
+                        
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    else
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                    end
+                else
+                    if currentTween then
+                        currentTween:Cancel()
+                    end
+                end
+            end
+            
+            if currentTween then
+                currentTween:Cancel()
+            end
+        end)
+    end,
+})
+
+TeleportTab:CreateToggle({
+    Name = "Teleport Nearest Player (Instant TP)",
+    CurrentValue = false,
+    Flag = "TeleportPlayerInstant",
+    Callback = function(Value)
+        TeleportPlayerInstantEnabled = Value
+        
+        task.spawn(function()
+            while TeleportPlayerInstantEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local target = nil
+                    local shortestDist = 400
+                    
+                    for _, player in ipairs(Players:GetPlayers()) do
+                        if player ~= LocalPlayer then
+                            local pChar = player.Character
+                            if pChar then
+                                local pRoot = pChar:FindFirstChild("HumanoidRootPart")
+                                local pHum = pChar:FindFirstChildOfClass("Humanoid")
+                                if pRoot and pHum and pHum.Health > 0 then
+                                    local dist = (rootPart.Position - pRoot.Position).Magnitude
+                                    if dist < shortestDist then
+                                        shortestDist = dist
+                                        target = pRoot
+                                    end
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    end
+                end
+            end
+        end)
+    end,
+})
+
+EspTab:CreateToggle({
     Name = "Esp Player (Show Player Name)",
     CurrentValue = false,
     Flag = "EspPlayerToggle",
@@ -243,148 +567,6 @@ Tab:CreateToggle({
         end
         
         Players.PlayerAdded:Connect(applyESP)
-    end,
-})
-
-Tab:CreateToggle({
-    Name = "Auto Farm Nearest (Target One Mobs)",
-    CurrentValue = false,
-    Flag = "AutoFarmNearest",
-    Callback = function(Value)
-        AutoFarmEnabled = Value
-        
-        task.spawn(function()
-            while AutoFarmEnabled do
-                RunService.Heartbeat:Wait()
-                local char = LocalPlayer.Character
-                if char and char:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = char.HumanoidRootPart
-                    local enemies = workspace:FindFirstChild("Enemies")
-                    
-                    local target = nil
-                    local shortestDist = 400
-                    
-                    if enemies then
-                        for _, enemy in ipairs(enemies:GetChildren()) do
-                            local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
-                            local hum = enemy:FindFirstChildOfClass("Humanoid")
-                            if enemyRoot and hum and hum.Health > 0 then
-                                local dist = (rootPart.Position - enemyRoot.Position).Magnitude
-                                if dist < shortestDist then
-                                    shortestDist = dist
-                                    target = enemyRoot
-                                end
-                            end
-                        end
-                    end
-                    
-                    if target then
-                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
-                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                    end
-                end
-            end
-        end)
-    end,
-})
-
-Tab:CreateToggle({
-    Name = "Teleport Nearest Player (Instant TP)",
-    CurrentValue = false,
-    Flag = "TeleportNearestPlayer",
-    Callback = function(Value)
-        TeleportPlayerEnabled = Value
-        
-        task.spawn(function()
-            while TeleportPlayerEnabled do
-                RunService.Heartbeat:Wait()
-                local char = LocalPlayer.Character
-                if char and char:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = char.HumanoidRootPart
-                    local target = nil
-                    local shortestDist = 400
-                    
-                    for _, player in ipairs(Players:GetPlayers()) do
-                        if player ~= LocalPlayer then
-                            local pChar = player.Character
-                            if pChar then
-                                local pRoot = pChar:FindFirstChild("HumanoidRootPart")
-                                local pHum = pChar:FindFirstChildOfClass("Humanoid")
-                                if pRoot and pHum and pHum.Health > 0 then
-                                    local dist = (rootPart.Position - pRoot.Position).Magnitude
-                                    if dist < shortestDist then
-                                        shortestDist = dist
-                                        target = pRoot
-                                    end
-                                end
-                            end
-                        end
-                    end
-                    
-                    if target then
-                        rootPart.CFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
-                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                    end
-                end
-            end
-        end)
-    end,
-})
-
-Tab:CreateButton({
-    Name = "Fast Mode (Recommended For Mobile)",
-    Callback = function()
-        local Lighting = game:GetService("Lighting")
-        local Terrain = workspace:FindFirstChildOfClass("Terrain")
-
-        Lighting.FogStart = math.huge
-        Lighting.FogEnd = math.huge
-        Lighting.GlobalShadows = false
-
-        if setfpscap then
-            setfpscap(math.huge)
-        end
-
-        if Terrain then
-            Terrain.WaterWaveSize = 0
-            Terrain.WaterWaveSpeed = 0
-            Terrain.WaterReflectance = 0
-            Terrain.WaterTransparency = 0
-        end
-
-        local function optimizeInstance(instance)
-            if instance:IsA("Texture") or instance:IsA("Decal") then
-                instance:Destroy()
-            elseif instance:IsA("ParticleEmitter") or instance:IsA("Trail") or instance:IsA("Smoke") or instance:IsA("Fire") or instance:IsA("Sparkles") then
-                instance:Destroy()
-            elseif instance:IsA("BasePart") and not instance:IsDescendantOf(LocalPlayer.Character or workspace) then
-                instance.Material = Enum.Material.SmoothPlastic
-                instance.Reflectance = 0
-            elseif instance:IsA("SurfaceAppearance") or instance:IsA("MeshPart") then
-                if instance:IsA("MeshPart") then
-                    instance.Material = Enum.Material.SmoothPlastic
-                end
-            end
-        end
-
-        for _, obj in ipairs(workspace:GetDescendants()) do
-            optimizeInstance(obj)
-        end
-
-        for _, obj in ipairs(Lighting:GetDescendants()) do
-            if obj:IsA("Atmosphere") or obj:IsA("Sky") or obj:IsA("BloomEffect") or obj:IsA("BlurEffect") or obj:IsA("DepthOfFieldEffect") or obj:IsA("SunRaysEffect") then
-                obj:Destroy()
-            end
-        end
-
-        workspace.DescendantAdded:Connect(function(newObj)
-            task.wait()
-            if newObj and newObj.Parent then
-                optimizeInstance(newObj)
-            end
-        end)
     end,
 })
 
