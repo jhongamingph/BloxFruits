@@ -375,6 +375,20 @@ TeleportTab:CreateToggle({
         task.spawn(function()
             local TweenService = game:GetService("TweenService")
             local currentTween = nil
+            local noclipConnection = nil
+            
+            if TeleportPlayerSpeedEnabled then
+                noclipConnection = RunService.Stepped:Connect(function()
+                    local char = LocalPlayer.Character
+                    if char then
+                        for _, part in ipairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") and part.CanCollide then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            end
             
             while TeleportPlayerSpeedEnabled do
                 RunService.Heartbeat:Wait()
@@ -436,6 +450,24 @@ TeleportTab:CreateToggle({
             
             if currentTween then
                 currentTween:Cancel()
+            end
+            
+            if noclipConnection then
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end
+            
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        if part.Name == "HumanoidRootPart" then
+                            part.CanCollide = false
+                        else
+                            part.CanCollide = true
+                        end
+                    end
+                end
             end
         end)
     end,
