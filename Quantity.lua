@@ -1009,7 +1009,7 @@ TeleportTab:CreateToggle({
     CurrentValue = false,
     Flag = "TeleportPlayerInstant",
     Callback = function(Value)
-        TeleportInstantPlayerInstantEnabled = Value
+        TeleportPlayerInstantEnabled = Value
         
         task.spawn(function()
             while TeleportPlayerInstantEnabled do
