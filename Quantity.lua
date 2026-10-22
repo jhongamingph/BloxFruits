@@ -20,11 +20,17 @@ local Window = Rayfield:CreateWindow({
 })
 
 local MainTab = Window:CreateTab("Main", 4483362458)
+local FarmTab = Window:CreateTab("Farm", 10734950309)
 local TeleportTab = Window:CreateTab("Teleport", 4483345998)
 local EspTab = Window:CreateTab("Esp", 6031094678)
 
-local AutoFarmNearestSpeedEnabled =false
-local AutoFarmNearestInstantEnabled =false
+local AutoFarmNearestSpeedEnabled = false
+local AutoFarmNearestInstantEnabled = false
+local AutoKillDoughKingEnabled = false
+local AutoKillCakePrinceEnabled = false
+local AutoKillSoulReaperEnabled = false
+local AutoKillTyrantOfTheSkiesEnabled = false
+local AutoKillRipIndraTrueFormEnabled = false
 local TeleportPlayerSpeedEnabled = false
 local TeleportPlayerInstantEnabled = false
 local ESPEnabled = false
@@ -365,6 +371,531 @@ MainTab:CreateToggle({
     end,
 })
 
+FarmTab:CreateToggle({
+    Name = "Auto Kill Dough King",
+    CurrentValue = false,
+    Flag = "AutoKillDoughKing",
+    Callback = function(Value)
+        AutoKillDoughKingEnabled = Value
+        
+        task.spawn(function()
+            local TweenService = game:GetService("TweenService")
+            local currentTween = nil
+            local noclipConnection = nil
+            
+            if AutoKillDoughKingEnabled then
+                noclipConnection = RunService.Stepped:Connect(function()
+                    local char = LocalPlayer.Character
+                    if char then
+                        for _, part in ipairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") and part.CanCollide then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            end
+            
+            while AutoKillDoughKingEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local enemies = workspace:FindFirstChild("Enemies")
+                    
+                    local target = nil
+                    
+                    if enemies then
+                        for _, enemy in ipairs(enemies:GetChildren()) do
+                            if enemy.Name == "Dough King" then
+                                local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
+                                local hum = enemy:FindFirstChildOfClass("Humanoid")
+                                if enemyRoot and hum and hum.Health > 0 then
+                                    target = enemyRoot
+                                    break
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                        local distance = (rootPart.Position - targetCFrame.Position).Magnitude
+                        local speed = 170
+                        local timeToReach = distance / speed
+                        
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                        
+                        local tweenInfo = TweenInfo.new(
+                            timeToReach,
+                            Enum.EasingStyle.Linear,
+                            Enum.EasingDirection.Out
+                        )
+                        
+                        currentTween = TweenService:Create(rootPart, tweenInfo, {CFrame = targetCFrame})
+                        currentTween:Play()
+                        
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    else
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                    end
+                else
+                    if currentTween then
+                        currentTween:Cancel()
+                    end
+                end
+            end
+            
+            if currentTween then
+                currentTween:Cancel()
+            end
+            
+            if noclipConnection then
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end
+            
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        if part.Name == "HumanoidRootPart" then
+                            part.CanCollide = false
+                        else
+                            part.CanCollide = true
+                        end
+                    end
+                end
+            end
+        end)
+    end,
+})
+
+FarmTab:CreateToggle({
+    Name = "Auto Kill Cake Prince",
+    CurrentValue = false,
+    Flag = "AutoKillCakePrince",
+    Callback = function(Value)
+        AutoKillCakePrinceEnabled = Value
+        
+        task.spawn(function()
+            local TweenService = game:GetService("TweenService")
+            local currentTween = nil
+            local noclipConnection = nil
+            
+            if AutoKillCakePrinceEnabled then
+                noclipConnection = RunService.Stepped:Connect(function()
+                    local char = LocalPlayer.Character
+                    if char then
+                        for _, part in ipairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") and part.CanCollide then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            end
+            
+            while AutoKillCakePrinceEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local enemies = workspace:FindFirstChild("Enemies")
+                    
+                    local target = nil
+                    
+                    if enemies then
+                        for _, enemy in ipairs(enemies:GetChildren()) do
+                            if enemy.Name == "Cake Prince" then
+                                local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
+                                local hum = enemy:FindFirstChildOfClass("Humanoid")
+                                if enemyRoot and hum and hum.Health > 0 then
+                                    target = enemyRoot
+                                    break
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                        local distance = (rootPart.Position - targetCFrame.Position).Magnitude
+                        local speed = 170
+                        local timeToReach = distance / speed
+                        
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                        
+                        local tweenInfo = TweenInfo.new(
+                            timeToReach,
+                            Enum.EasingStyle.Linear,
+                            Enum.EasingDirection.Out
+                        )
+                        
+                        currentTween = TweenService:Create(rootPart, tweenInfo, {CFrame = targetCFrame})
+                        currentTween:Play()
+                        
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    else
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                    end
+                else
+                    if currentTween then
+                        currentTween:Cancel()
+                    end
+                end
+            end
+            
+            if currentTween then
+                currentTween:Cancel()
+            end
+            
+            if noclipConnection then
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end
+            
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        if part.Name == "HumanoidRootPart" then
+                            part.CanCollide = false
+                        else
+                            part.CanCollide = true
+                        end
+                    end
+                end
+            end
+        end)
+    end,
+})
+
+FarmTab:CreateToggle({
+    Name = "Auto Kill Soul Reaper",
+    CurrentValue = false,
+    Flag = "AutoKillSoulReaper",
+    Callback = function(Value)
+        AutoKillSoulReaperEnabled = Value
+        
+        task.spawn(function()
+            local TweenService = game:GetService("TweenService")
+            local currentTween = nil
+            local noclipConnection = nil
+            
+            if AutoKillSoulReaperEnabled then
+                noclipConnection = RunService.Stepped:Connect(function()
+                    local char = LocalPlayer.Character
+                    if char then
+                        for _, part in ipairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") and part.CanCollide then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            end
+            
+            while AutoKillSoulReaperEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local enemies = workspace:FindFirstChild("Enemies")
+                    
+                    local target = nil
+                    
+                    if enemies then
+                        for _, enemy in ipairs(enemies:GetChildren()) do
+                            if enemy.Name == "Soul Reaper" then
+                                local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
+                                local hum = enemy:FindFirstChildOfClass("Humanoid")
+                                if enemyRoot and hum and hum.Health > 0 then
+                                    target = enemyRoot
+                                    break
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                        local distance = (rootPart.Position - targetCFrame.Position).Magnitude
+                        local speed = 170
+                        local timeToReach = distance / speed
+                        
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                        
+                        local tweenInfo = TweenInfo.new(
+                            timeToReach,
+                            Enum.EasingStyle.Linear,
+                            Enum.EasingDirection.Out
+                        )
+                        
+                        currentTween = TweenService:Create(rootPart, tweenInfo, {CFrame = targetCFrame})
+                        currentTween:Play()
+                        
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    else
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                    end
+                else
+                    if currentTween then
+                        currentTween:Cancel()
+                    end
+                end
+            end
+            
+            if currentTween then
+                currentTween:Cancel()
+            end
+            
+            if noclipConnection then
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end
+            
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        if part.Name == "HumanoidRootPart" then
+                            part.CanCollide = false
+                        else
+                            part.CanCollide = true
+                        end
+                    end
+                end
+            end
+        end)
+    end,
+})
+
+FarmTab:CreateToggle({
+    Name = "Auto Kill Tyrant of the Skies",
+    CurrentValue = false,
+    Flag = "AutoKillTyrantOfTheSkies",
+    Callback = function(Value)
+        AutoKillTyrantOfTheSkiesEnabled = Value
+        
+        task.spawn(function()
+            local TweenService = game:GetService("TweenService")
+            local currentTween = nil
+            local noclipConnection = nil
+            
+            if AutoKillTyrantOfTheSkiesEnabled then
+                noclipConnection = RunService.Stepped:Connect(function()
+                    local char = LocalPlayer.Character
+                    if char then
+                        for _, part in ipairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") and part.CanCollide then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            end
+            
+            while AutoKillTyrantOfTheSkiesEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local enemies = workspace:FindFirstChild("Enemies")
+                    
+                    local target = nil
+                    
+                    if enemies then
+                        for _, enemy in ipairs(enemies:GetChildren()) do
+                            if enemy.Name == "Tyrant of the Skies" then
+                                local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
+                                local hum = enemy:FindFirstChildOfClass("Humanoid")
+                                if enemyRoot and hum and hum.Health > 0 then
+                                    target = enemyRoot
+                                    break
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                        local distance = (rootPart.Position - targetCFrame.Position).Magnitude
+                        local speed = 170
+                        local timeToReach = distance / speed
+                        
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                        
+                        local tweenInfo = TweenInfo.new(
+                            timeToReach,
+                            Enum.EasingStyle.Linear,
+                            Enum.EasingDirection.Out
+                        )
+                        
+                        currentTween = TweenService:Create(rootPart, tweenInfo, {CFrame = targetCFrame})
+                        currentTween:Play()
+                        
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    else
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                    end
+                else
+                    if currentTween then
+                        currentTween:Cancel()
+                    end
+                end
+            end
+            
+            if currentTween then
+                currentTween:Cancel()
+            end
+            
+            if noclipConnection then
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end
+            
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        if part.Name == "HumanoidRootPart" then
+                            part.CanCollide = false
+                        else
+                            part.CanCollide = true
+                        end
+                    end
+                end
+            end
+        end)
+    end,
+})
+
+FarmTab:CreateToggle({
+    Name = "Auto Kill Rip Indra",
+    CurrentValue = false,
+    Flag = "AutoKillRipIndra",
+    Callback = function(Value)
+        AutoKillRipIndraTrueFormEnabled = Value
+        
+        task.spawn(function()
+            local TweenService = game:GetService("TweenService")
+            local currentTween = nil
+            local noclipConnection = nil
+            
+            if AutoKillRipIndraTrueFormEnabled then
+                noclipConnection = RunService.Stepped:Connect(function()
+                    local char = LocalPlayer.Character
+                    if char then
+                        for _, part in ipairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") and part.CanCollide then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            end
+            
+            while AutoKillRipIndraTrueFormEnabled do
+                RunService.Heartbeat:Wait()
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = char.HumanoidRootPart
+                    local enemies = workspace:FindFirstChild("Enemies")
+                    
+                    local target = nil
+                    
+                    if enemies then
+                        for _, enemy in ipairs(enemies:GetChildren()) do
+                            if enemy.Name == "rip_indra True Form" then
+                                local enemyRoot = enemy:FindFirstChild("HumanoidRootPart")
+                                local hum = enemy:FindFirstChildOfClass("Humanoid")
+                                if enemyRoot and hum and hum.Health > 0 then
+                                    target = enemyRoot
+                                    break
+                                end
+                            end
+                        end
+                    end
+                    
+                    if target then
+                        local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
+                        local distance = (rootPart.Position - targetCFrame.Position).Magnitude
+                        local speed = 170
+                        local timeToReach = distance / speed
+                        
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                        
+                        local tweenInfo = TweenInfo.new(
+                            timeToReach,
+                            Enum.EasingStyle.Linear,
+                            Enum.EasingDirection.Out
+                        )
+                        
+                        currentTween = TweenService:Create(rootPart, tweenInfo, {CFrame = targetCFrame})
+                        currentTween:Play()
+                        
+                        rootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        rootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    else
+                        if currentTween then
+                            currentTween:Cancel()
+                        end
+                    end
+                else
+                    if currentTween then
+                        currentTween:Cancel()
+                    end
+                end
+            end
+            
+            if currentTween then
+                currentTween:Cancel()
+            end
+            
+            if noclipConnection then
+                noclipConnection:Disconnect()
+                noclipConnection = nil
+            end
+            
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        if part.Name == "HumanoidRootPart" then
+                            part.CanCollide = false
+                        else
+                            part.CanCollide = true
+                        end
+                    end
+                end
+            end
+        end)
+    end,
+})
+
 TeleportTab:CreateToggle({
     Name = "Teleport Nearest Player (Speed)",
     CurrentValue = false,
@@ -478,7 +1009,7 @@ TeleportTab:CreateToggle({
     CurrentValue = false,
     Flag = "TeleportPlayerInstant",
     Callback = function(Value)
-        TeleportPlayerInstantEnabled = Value
+        TeleportInstantPlayerInstantEnabled = Value
         
         task.spawn(function()
             while TeleportPlayerInstantEnabled do
@@ -520,7 +1051,7 @@ TeleportTab:CreateToggle({
 EspTab:CreateToggle({
     Name = "Esp Player (Show Player Name)",
     CurrentValue = false,
-    Flag = "EspPlayerToggle",
+    Flag = "EspPlayer",
     Callback = function(Value)
         ESPEnabled = Value
         
