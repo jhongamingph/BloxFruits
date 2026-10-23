@@ -246,7 +246,7 @@ MainTab:CreateToggle({
                     local enemies = workspace:FindFirstChild("Enemies")
                     
                     local target = nil
-                    local shortestDist = 650
+                    local shortestDist = 750
                     
                     if enemies then
                         for _, enemy in ipairs(enemies:GetChildren()) do
@@ -394,7 +394,7 @@ TeleportTab:CreateToggle({
                 if char and char:FindFirstChild("HumanoidRootPart") then
                     local rootPart = char.HumanoidRootPart
                     local target = nil
-                    local shortestDist = 650
+                    local shortestDist = 750
                     
                     for _, player in ipairs(Players:GetPlayers()) do
                         if player ~= LocalPlayer then
