@@ -17,8 +17,8 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false,
 })
 
-local MobsTab = Window:CreateTab("Main", 4483362458)
-local PlayersTab = Window:CreateTab("Teleport", 4483345998)
+local MobsTab = Window:CreateTab("Mobs", 4483362458)
+local PlayersTab = Window:CreateTab("Players", 4483345998)
 local EspTab = Window:CreateTab("Esp", 6031094678)
 
 local AutoFarmNearestSpeedEnabled = false
