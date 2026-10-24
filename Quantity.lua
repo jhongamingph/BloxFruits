@@ -1,6 +1,6 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-setclipboard("discord.gg/NyvndxAadV")
+setclipboard("discord.gg/ntbyD4efEQ")
 
 local Window = Rayfield:CreateWindow({
     Name = "Quantity Dynamics Hub 🚀",
