@@ -265,7 +265,7 @@ MainTab:CreateToggle({
                     if target then
                         local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
                         local distance = (rootPart.Position - targetCFrame.Position).Magnitude
-                        local speed = 170
+                        local speed = 200
                         local timeToReach = distance / speed
                         
                         if currentTween then
@@ -416,7 +416,7 @@ TeleportTab:CreateToggle({
                     if target then
                         local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
                         local distance = (rootPart.Position - targetCFrame.Position).Magnitude
-                        local speed = 170
+                        local speed = 200
                         local timeToReach = distance / speed
                         
                         if currentTween then
