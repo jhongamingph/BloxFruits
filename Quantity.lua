@@ -17,8 +17,8 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false,
 })
 
-local MainTab = Window:CreateTab("Main", 4483362458)
-local TeleportTab = Window:CreateTab("Teleport", 4483345998)
+local MobsTab = Window:CreateTab("Main", 4483362458)
+local PlayersTab = Window:CreateTab("Teleport", 4483345998)
 local EspTab = Window:CreateTab("Esp", 6031094678)
 
 local AutoFarmNearestSpeedEnabled = false
@@ -213,7 +213,7 @@ if _G.FastAttack then
     _ENV.rz_FastAttack = FastAttack
 end
 
-MainTab:CreateToggle({
+MobsTab:CreateToggle({
     Name = "Auto Farm Nearest (Speed)",
     CurrentValue = false,
     Flag = "AutoFarmNearestSpeed",
@@ -246,7 +246,7 @@ MainTab:CreateToggle({
                     local enemies = workspace:FindFirstChild("Enemies")
                     
                     local target = nil
-                    local shortestDist = 750
+                    local shortestDist = 950
                     
                     if enemies then
                         for _, enemy in ipairs(enemies:GetChildren()) do
@@ -265,7 +265,7 @@ MainTab:CreateToggle({
                     if target then
                         local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
                         local distance = (rootPart.Position - targetCFrame.Position).Magnitude
-                        local speed = 200
+                        local speed = 350
                         local timeToReach = distance / speed
                         
                         if currentTween then
@@ -320,7 +320,7 @@ MainTab:CreateToggle({
     end,
 })
 
-MainTab:CreateToggle({
+MobsTab:CreateToggle({
     Name = "Auto Farm Nearest (Instant)",
     CurrentValue = false,
     Flag = "AutoFarmNearestInstant",
@@ -363,7 +363,7 @@ MainTab:CreateToggle({
     end,
 })
 
-TeleportTab:CreateToggle({
+PlayersTab:CreateToggle({
     Name = "Teleport Nearest Player (Speed)",
     CurrentValue = false,
     Flag = "TeleportNearestPlayerSpeed",
@@ -394,7 +394,7 @@ TeleportTab:CreateToggle({
                 if char and char:FindFirstChild("HumanoidRootPart") then
                     local rootPart = char.HumanoidRootPart
                     local target = nil
-                    local shortestDist = 750
+                    local shortestDist = 950
                     
                     for _, player in ipairs(Players:GetPlayers()) do
                         if player ~= LocalPlayer then
@@ -416,7 +416,7 @@ TeleportTab:CreateToggle({
                     if target then
                         local targetCFrame = CFrame.new(target.Position + Vector3.new(0, 25, 0))
                         local distance = (rootPart.Position - targetCFrame.Position).Magnitude
-                        local speed = 200
+                        local speed = 350
                         local timeToReach = distance / speed
                         
                         if currentTween then
@@ -471,7 +471,7 @@ TeleportTab:CreateToggle({
     end,
 })
 
-TeleportTab:CreateToggle({
+PlayersTab:CreateToggle({
     Name = "Teleport Nearest Player (Instant)",
     CurrentValue = false,
     Flag = "TeleportPlayerInstant",
