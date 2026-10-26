@@ -3,12 +3,12 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 setclipboard("discord.gg/ntbyD4efEQ")
 
 local Window = Rayfield:CreateWindow({
-    Name = "Quantity Dynamics Hub 🚀",
-    LoadingTitle = "🚀 Quantity Dynamics 🚀",
+    Name = "Quantity Hub | Blox Fruits",
+    LoadingTitle = "Quantity Hub | Blox Fruits",
     LoadingSubtitle = "Join Discord for more script...",
     ConfigurationSaving = {
         Enabled = true,
-        FolderName = "Quantity Dynamics",
+        FolderName = "Quantity • Blox Fruits",
         FileName = "Configuration"
     },
     Discord = {
@@ -26,6 +26,8 @@ local AutoFarmNearestInstantEnabled = false
 local TeleportPlayerSpeedEnabled = false
 local TeleportPlayerInstantEnabled = false
 local ESPEnabled = false
+local IncreaseMobsHitBoxEnabled = false
+local IncreasePlayersHitboxEnabled = false
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
@@ -597,6 +599,80 @@ EspTab:CreateToggle({
         end
         
         Players.PlayerAdded:Connect(applyESP)
+    end,
+})
+
+EspTab:CreateToggle({
+    Name = "Increase Mobs HitBox (Super Big)",
+    CurrentValue = false,
+    Flag = "IncreaseMobsHitBox",
+    Callback = function(Value)
+        IncreaseMobsHitBoxEnabled = Value
+        task.spawn(function()
+            local originalSizes = {}
+            while IncreaseMobsHitBoxEnabled do
+                RunService.Heartbeat:Wait()
+                local enemies = workspace:FindFirstChild("Enemies")
+                if enemies then
+                    for _, enemy in ipairs(enemies:GetChildren()) do
+                        local root = enemy:FindFirstChild("HumanoidRootPart") or enemy:FindFirstChild("Head")
+                        if root then
+                            if not originalSizes[root] then
+                                originalSizes[root] = root.Size
+                            end
+                            root.Size = Vector3.new(75, 75, 75)
+                            root.Transparency = 0.7
+                            root.CanCollide = false
+                        end
+                    end
+                end
+            end
+            for root, origSize in pairs(originalSizes) do
+                if root and root.Parent then
+                    root.Size = origSize
+                    root.Transparency = 0
+                    root.CanCollide = true
+                end
+            end
+        end)
+    end,
+})
+
+EspTab:CreateToggle({
+    Name = "Increase Players Hitbox (Super Big)",
+    CurrentValue = false,
+    Flag = "IncreasePlayersHitbox",
+    Callback = function(Value)
+        IncreasePlayersHitboxEnabled = Value
+        task.spawn(function()
+            local originalSizes = {}
+            while IncreasePlayersHitboxEnabled do
+                RunService.Heartbeat:Wait()
+                local characters = workspace:FindFirstChild("Characters")
+                if characters then
+                    for _, char in ipairs(characters:GetChildren()) do
+                        if char ~= LocalPlayer.Character then
+                            local root = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Head")
+                            if root then
+                                if not originalSizes[root] then
+                                    originalSizes[root] = root.Size
+                                end
+                                root.Size = Vector3.new(75, 75, 75)
+                                root.Transparency = 0.7
+                                root.CanCollide = false
+                            end
+                        end
+                    end
+                end
+            end
+            for root, origSize in pairs(originalSizes) do
+                if root and root.Parent then
+                    root.Size = origSize
+                    root.Transparency = 0
+                    root.CanCollide = true
+                end
+            end
+        end)
     end,
 })
 
