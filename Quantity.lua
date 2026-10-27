@@ -619,7 +619,7 @@ EspTab:CreateToggle({
                                 originalSizes[root] = root.Size
                             end
                             root.Size = Vector3.new(75, 75, 75)
-                            root.Transparency = 0
+                            root.Transparency = 0.7
                             root.CanCollide = false
                         end
                     end
@@ -656,7 +656,7 @@ EspTab:CreateToggle({
                                     originalSizes[root] = root.Size
                                 end
                                 root.Size = Vector3.new(75, 75, 75)
-                                root.Transparency = 0
+                                root.Transparency = 0.7
                                 root.CanCollide = false
                             end
                         end
