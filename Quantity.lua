@@ -1,14 +1,12 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-setclipboard("discord.gg/ntbyD4efEQ")
-
 local Window = Rayfield:CreateWindow({
     Name = "Quantity Hub | Blox Fruits",
-    LoadingTitle = "Quantity Hub | Blox Fruits",
-    LoadingSubtitle = "Join Discord for more script...",
+    LoadingTitle = "Join Discord for more script",
+    LoadingSubtitle = "discord.gg/ntbyD4efEQ",
     ConfigurationSaving = {
         Enabled = true,
-        FolderName = "Quantity • Blox Fruits",
+        FolderName = "Quantity Hub • Blox Fruits",
         FileName = "Configuration"
     },
     Discord = {
@@ -603,7 +601,7 @@ EspTab:CreateToggle({
 })
 
 EspTab:CreateToggle({
-    Name = "Increase Mobs HitBox (Super Big)",
+    Name = "Increase HitBox (Mobs)",
     CurrentValue = false,
     Flag = "IncreaseMobsHitBox",
     Callback = function(Value)
@@ -621,7 +619,7 @@ EspTab:CreateToggle({
                                 originalSizes[root] = root.Size
                             end
                             root.Size = Vector3.new(75, 75, 75)
-                            root.Transparency = 0.7
+                            root.Transparency = 0
                             root.CanCollide = false
                         end
                     end
@@ -639,7 +637,7 @@ EspTab:CreateToggle({
 })
 
 EspTab:CreateToggle({
-    Name = "Increase Players Hitbox (Super Big)",
+    Name = "Increase HitBox (Players)",
     CurrentValue = false,
     Flag = "IncreasePlayersHitbox",
     Callback = function(Value)
@@ -658,7 +656,7 @@ EspTab:CreateToggle({
                                     originalSizes[root] = root.Size
                                 end
                                 root.Size = Vector3.new(75, 75, 75)
-                                root.Transparency = 0.7
+                                root.Transparency = 0
                                 root.CanCollide = false
                             end
                         end
