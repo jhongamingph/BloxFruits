@@ -580,7 +580,7 @@ EspTab:CreateToggle({
                     local hp = math.floor(humanoid.Health)
                     local maxHp = math.floor(humanoid.MaxHealth)
                     
-                    textLabel.Text = string.format("Level %s | %s | %d/%d HP", level, player.DisplayName, hp, maxHp)
+                    textLabel.Text = string.format("Lv. %s | %s | %d/%d HP", level, player.DisplayName, hp, maxHp)
                 end)
             end
             
